@@ -27,14 +27,6 @@ function keyPressed() {
 		case 68:
 			xspeed = 2;
 			break;
-		case 38:
-		case 87:
-			yspeed = -2;
-			break;
-		case 40:
-		case 83:
-			yspeed = 2;
-			break;
 	}
 }
 
@@ -47,14 +39,6 @@ function keyReleased() {
 		case 39:
 		case 68:
 			xspeed = 0;
-			break;
-		case 38:
-		case 87:
-			yspeed = 0;
-			break;
-		case 40:
-		case 83:
-			yspeed = 0;
 			break;
 	}
 }
