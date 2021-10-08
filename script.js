@@ -21,10 +21,17 @@ class Rect {
 
   draw() {
     rect(this.x, this.y, this.width, this.height);
+    if (keyIsDown(LEFT_ARROW) || (keyIsDown(65))) {
+      this.x -= 5;
+    }
+
+    if (keyIsDown(RIGHT_ARROW) || (keyIsDown(68))) {
+      this.x += 5;
+    }
   }
 }
 
-var ball1, paddle, [xpos, ypos, xspeed, yspeed] = [225, 225, 0, 0];
+var ball1, paddle;
 
 function setup() {
   createCanvas(500, 400);
@@ -44,36 +51,4 @@ function draw() {
   fill(0, 0, 0);
   ball1.draw();
   paddle.draw();
-
-  if (xpos >= 400 || xpos <= 0) {
-    xpos = 400;
-  }
-  else
-    xpos += -xspeed;
-}
-
-function keyPressed() {
-  switch (keyCode) {
-    case 37:
-    case 65:
-      
-      break;
-    case 39:
-    case 68:
-      
-      break;
-  }
-}
-
-function keyReleased() {
-  switch (keyCode) {
-    case 37:
-    case 65:
-      
-      break;
-    case 39:
-    case 68:
-      
-      break;
-  }
 }
