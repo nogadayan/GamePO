@@ -1,32 +1,32 @@
 class Ball {
   constructor(x, y, w, h, xv, yv) {
-    this.x = x;
-    this.y = y;
-    this.width = w;
-    this.height = h;
-    this.xv = xv;
-    this.yv = yv;
+    ballX = x;
+    ballY = y;
+    ballW = w;
+    ballH = h;
+    ballXV = xv;
+    ballYV = yv;
   }
 
   move() {
-    this.x = this.x + this.xv;
-    this.y = this.y + this.yv;
+    ballX = ballX + ballXV;
+    ballY = ballY + ballYV;
 
-    if (this.x <= 25 || this.x >= 475) {
-      this.xv = this.xv * -1;
+    if (ballX <= 25 || ballX >= 475) {
+      ballXV = ballXV * -1;
     }
-    if (this.y <= 25 || this.y >= 375) {
-      this.yv = this.yv * -1;
+    if (ballY <= 25 || ballY >= 375) {
+      ballYV = ballYV * -1;
     }
 
   }
 
   draw() {
-    ellipse(this.x, this.y, this.width, this.height, this.xv, this.yv);
+    ellipse(ballX, ballY, ballW, ballH, ballXV, ballYV);
   }
 
   collide() {
-    if (this.x < this.x + this.w && this.x + this.w > this.x) {
+    if (ballY + 25 >= rectY + rectH && rectY + rectH <= ballY +25 && ballX +25>= rectX && ballX <= rectX + rectW +25) {
       fill("red");
     }
     else {
@@ -37,32 +37,33 @@ class Ball {
 
 class Rect {
   constructor(x, y, w, h, vx) {
-    this.x = x;
-    this.y = y;
-    this.width = w;
-    this.height = h;
-    this.vx = vx;
+    rectX = x;
+    rectY = y;
+    rectW = w;
+    rectH = h;
+    rectVX = vx;
   }
 
   draw() {
-    rect(this.x, this.y, this.width, this.height);
+    rect(rectX, rectY, rectW, rectH, rectVX);
 
-    if (this.x <= 0) {
-      this.x = 2;
+
+    if (rectX <= 0) {
+      rectX = 1;
     }
-    if (this.x >= 300) {
-      this.x = 298;
+    if (rectX >= 300) {
+      rectX = 299;
     }
 
     if (keyIsDown(LEFT_ARROW) || (keyIsDown(65))) {
-      this.x -= 5;
+      rectX -= 3;
     }
 
     if (keyIsDown(RIGHT_ARROW) || (keyIsDown(68))) {
-      this.x += 5;
+      rectX += 3;
     }
 
-    this.vx = this.x + this.vx;
+
 
 
   }
@@ -77,22 +78,13 @@ class Target {
 
 }
 
-var ball, paddle;
+var ball, paddle, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballW, ballH, ballXV, ballYV;
 
 function setup() {
   createCanvas(500, 400);
 
   ball = new Ball(225, 225, 50, 50, 2, 2);
-  paddle = new Rect(150, 350, 200, 10);
-}
-
-function paddleBounce() {
-  if (Ball.this.x < Rect.this.x + Rect.this.w && Rect.this.x + Rect.this.w > Ball.this.x) {
-    fill("red");
-  }
-  else {
-    fill("green");
-  }
+  paddle = new Rect(150, 350, 200, 10, 0);
 }
 
 function draw() {
@@ -102,8 +94,9 @@ function draw() {
   text("Use the arrow keys, left and right (or AD) to move the square around", 25, 25);
 
   fill(0, 0, 0);
+  paddle.draw();
+  ball.collide();
   ball.draw();
   ball.move();
-  ball.collide();
-  paddle.draw();
+  
 }
