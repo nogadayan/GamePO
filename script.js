@@ -25,12 +25,16 @@ class Ball {
     ellipse(ballX, ballY, ballW, ballH, ballXV, ballYV);
   }
 
-  collide() {
-    if (ballY + 25 >= rectY + rectH && rectY + rectH <= ballY +25 && ballX +25>= rectX && ballX <= rectX + rectW +25) {
-      fill("red");
+  collidePaddle() {
+    if (ballY + 25 >= rectY + rectH && rectY + rectH <= ballY + 25 && ballX + 25 >= rectX && ballX <= rectX + rectW + 25) {
+      ballY = (rectY + rectH - 25);
+      ballYV = ballYV * -1;
     }
-    else {
-      fill("green");
+  }
+
+  collideBottom() {
+    if (ballY >= 375) {
+      fill("red");
     }
   }
 }
@@ -63,9 +67,6 @@ class Rect {
       rectX += 3;
     }
 
-
-
-
   }
 }
 
@@ -95,8 +96,9 @@ function draw() {
 
   fill(0, 0, 0);
   paddle.draw();
-  ball.collide();
+  ball.collidePaddle();
+  ball.collideBottom();
   ball.draw();
   ball.move();
-  
+
 }
