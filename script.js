@@ -1,19 +1,22 @@
-var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballW, ballH, ballXV, ballYV, gameState = 0, img1;
+var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballW, ballH, ballXV, ballYV, gameState = 0, img1, img2, img3, x1 = 0, x2, scrollSpeed = 0.3;
 
 let bricks = []
 
 function preload() {
   img1 = loadImage('img/itshopeless_7587.jpg');
+  img2 = loadImage('img/imkv74m4q5g41.png');
+  img3 = loadImage('img/scroller.png');
 }
 
 function setup() {
   createCanvas(500, 400);
 
+  x2 = width;
   ball = new Ball(225, 225, 50, 50, 2, 2);
   paddle = new Rect(150, 350, 200, 10, 0);
   const bricksPerRow = 10;
   const brickWidth = width / bricksPerRow;
-  for (let i = 0; i < bricksPerRow;  i++ ) {
+  for (let i = 0; i < bricksPerRow; i++) {
     brick = new Brick(createVector(0, 0), brickWidth, 25, color("blue"))
   }
 }
@@ -58,22 +61,29 @@ function reset() {
 function game() {
   background(125);
 
+
   fill(0);
   text("Use the arrow keys, left and right (or AD) to move the square around", 25, 25);
 
   fill(0, 0, 0);
+  //scroller();
   paddle.draw();
   ball.collidePaddle();
   ball.collideBottom();
   ball.collideBrick();
   ball.draw();
   ball.move();
+
 }
 
 function gameOver() {
   background('green');
   image(img1, 0, 0, 500, 400);
-  text("GAME OVER", 215, 345);
+  textStyle(BOLD);
+  textSize(16);
+  text("GAME OVER", 205, 350);
+  textSize(14);
+  text("Press Esc to go back to the main menu", 125, 385);
   fill('white');
 }
 
@@ -92,6 +102,22 @@ function keyPressed() {
     gameState = 2;
   }
 }
+
+function scroller() {
+  image(img3, x1, 0, width, height);
+  image(img3, x2, 0, width, height);
+
+  x1 -= scrollSpeed;
+  x2 -= scrollSpeed;
+
+  if (x1 < -width) {
+    x1 = width;
+  }
+  if (x2 < -width) {
+    x2 = width;
+  }
+}
+
 
 class Ball {
   constructor(x, y, w, h, xv, yv) {
