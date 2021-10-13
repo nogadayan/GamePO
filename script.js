@@ -6,14 +6,12 @@ function preload() {
   img1 = loadImage('img/gameOver.jpg');
   img2 = loadImage('img/backgroundGame.png');
   soundFormats('mp3', 'ogg')
-  sound1 = loadSound('sound/gameOver.mp3');
+  sound1 = loadSound('mp3/gameOver.mp3');
 }
 
 function setup() {
   createCanvas(1000, 800);
   x2 = 2844;
-  sound1.play();
-
   ball = new Ball(225, 225, 15, 2, 2);
   paddle = new Rect(150, 350, 200, 15, 0);
   const bricksPerRow = 10;
@@ -98,6 +96,7 @@ function music() {
     sound1.setVolume(1);
     sound1.rate(1);
   }
+  
 }
 function keyPressed() {
 
