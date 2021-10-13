@@ -1,10 +1,21 @@
-var ball, paddle, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballW, ballH, ballXV, ballYV, gameState = 0;
+var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballW, ballH, ballXV, ballYV, gameState = 0, img1;
+
+let bricks = []
+
+function preload() {
+  img1 = loadImage('img/itshopeless_7587.jpg');
+}
 
 function setup() {
   createCanvas(500, 400);
 
   ball = new Ball(225, 225, 50, 50, 2, 2);
   paddle = new Rect(150, 350, 200, 10, 0);
+  const bricksPerRow = 10;
+  const brickWidth = width / bricksPerRow;
+  for (let i = 0; i < bricksPerRow;  i++ ) {
+    brick = new Brick(createVector(0, 0), brickWidth, 25, color("blue"))
+  }
 }
 
 function draw() {
@@ -39,7 +50,8 @@ function reset() {
   ballX = 225;
   ballY = 225;
   rectX = 150;
-  rectY = 350;  
+  rectY = 350;
+  fill(0);
 }
 
 
@@ -53,19 +65,22 @@ function game() {
   paddle.draw();
   ball.collidePaddle();
   ball.collideBottom();
+  ball.collideBrick();
   ball.draw();
   ball.move();
 }
 
 function gameOver() {
-  background("green");
-  text("GAME OVER", 25, 45);
-  reset();
+  background('green');
+  image(img1, 0, 0, 500, 400);
+  text("GAME OVER", 215, 345);
+  fill('white');
 }
+
 
 function keyPressed() {
 
-  if (keyIsDown(49)) {
+  if (keyIsDown(ESCAPE)) {
     gameState = 0;
   }
 
@@ -102,7 +117,7 @@ class Ball {
       ballYV = ballYV * -1;
     }
     else {
-      ballYV = ballYV; 
+      ballYV = ballYV;
     }
 
   }
@@ -121,7 +136,12 @@ class Ball {
   collideBottom() {
     if (ballY >= 375) {
       fill("red");
+      gameState = 2;
     }
+  }
+
+  collideBrick() {
+
   }
 }
 
@@ -156,11 +176,19 @@ class Rect {
   }
 }
 
-class Target {
-  constructor(x, y, w, h) {
-
+class Brick {
+  constructor(x, y, w, h, c) {
+    this.x = x;
+    this.y = y;
+    this.width = w;
+    this.height = h;
+    this.color = c;
+    this.points = 1;
   }
-
+  display() {
+    fill(this.color);
+    rect(this.x, this.y, this.width, this.height);
+  }
 
 
 }
