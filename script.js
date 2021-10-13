@@ -1,19 +1,21 @@
-var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballW, ballH, ballXV, ballYV, gameState = 0, img1, img2, img3, x1 = 0, x2, scrollSpeed = 0.3;
+var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballR, ballXV, ballYV, gameState = 0, img1, img2, x1 = 0, x2, scrollSpeed = 0.3, seconds = 1000, sound1;
 
 let bricks = []
 
 function preload() {
-  img1 = loadImage('img/itshopeless_7587.jpg');
-  img2 = loadImage('img/imkv74m4q5g41.png');
-  img3 = loadImage('img/scroller.png');
+  img1 = loadImage('img/gameOver.jpg');
+  img2 = loadImage('img/backgroundGame.png');
+  soundFormats('mp3', 'ogg')
+  sound1 = loadSound('sound/gameOver.mp3');
 }
 
 function setup() {
-  createCanvas(500, 400);
+  createCanvas(1000, 800);
+  x2 = 2844;
+  sound1.play();
 
-  x2 = width;
-  ball = new Ball(225, 225, 50, 50, 2, 2);
-  paddle = new Rect(150, 350, 200, 10, 0);
+  ball = new Ball(225, 225, 15, 2, 2);
+  paddle = new Rect(150, 350, 200, 15, 0);
   const bricksPerRow = 10;
   const brickWidth = width / bricksPerRow;
   for (let i = 0; i < bricksPerRow; i++) {
@@ -35,6 +37,7 @@ function draw() {
 
   if (gameState == 2) {
     gameOver();
+    music();
   }
 }
 
@@ -42,6 +45,7 @@ var x = 0;
 
 function menu() {
   background("#ababab");
+  fill(0);
   text("MENU", 25, 45);
   text("1. menu", 25, 65);
   text("2. start game", 25, 85);
@@ -54,7 +58,6 @@ function reset() {
   ballY = 225;
   rectX = 150;
   rectY = 350;
-  fill(0);
 }
 
 
@@ -66,28 +69,36 @@ function game() {
   text("Use the arrow keys, left and right (or AD) to move the square around", 25, 25);
 
   fill(0, 0, 0);
-  //scroller();
+  scroller();
   paddle.draw();
   ball.collidePaddle();
   ball.collideBottom();
   ball.collideBrick();
   ball.draw();
-  ball.move();
+  setTimeout(ball.move, seconds * 3);
 
 }
 
 function gameOver() {
   background('green');
-  image(img1, 0, 0, 500, 400);
+  image(img1, 0, 0, 1000, 800);
+  
   textStyle(BOLD);
-  textSize(16);
-  text("GAME OVER", 205, 350);
-  textSize(14);
-  text("Press Esc to go back to the main menu", 125, 385);
+  textSize(36);
+  text("GAME OVER", 405, 700);
+  textSize(24);
+  text("Press Esc to go back to the main menu", 295, 765);
   fill('white');
+  setTimeout(reset, seconds * 3);
 }
 
-
+function music() {
+  if (!sound1.isPlaying()) {
+    sound1.play();
+    sound1.setVolume(1);
+    sound1.rate(1);
+  }
+}
 function keyPressed() {
 
   if (keyIsDown(ESCAPE)) {
@@ -104,27 +115,26 @@ function keyPressed() {
 }
 
 function scroller() {
-  image(img3, x1, 0, width, height);
-  image(img3, x2, 0, width, height);
+  image(img2, x1, 0, 2844, 800);
+  image(img2, x2, 0, 2844, 800);
 
   x1 -= scrollSpeed;
   x2 -= scrollSpeed;
 
-  if (x1 < -width) {
-    x1 = width;
+  if (x1 < -2844) {
+    x1 = 2844;
   }
-  if (x2 < -width) {
-    x2 = width;
+  if (x2 < -2844) {
+    x2 = 2844;
   }
 }
 
 
 class Ball {
-  constructor(x, y, w, h, xv, yv) {
+  constructor(x, y, r, xv, yv) {
     ballX = x;
     ballY = y;
-    ballW = w;
-    ballH = h;
+    ballR = r;
     ballXV = xv;
     ballYV = yv;
   }
@@ -133,13 +143,13 @@ class Ball {
     ballX = ballX + ballXV;
     ballY = ballY + ballYV;
 
-    if (gameState == 1 && ballX <= 25 || ballX >= 475) {
+    if (gameState == 1 && ballX <= 23 || ballX >= 975) {
       ballXV = ballXV * -1;
     }
     else {
       ballXV = ballXV;
     }
-    if (gameState == 1 && ballY <= 25 || ballY >= 375) {
+    if (gameState == 1 && ballY <= 23 || ballY >= 775) {
       ballYV = ballYV * -1;
     }
     else {
@@ -149,18 +159,26 @@ class Ball {
   }
 
   draw() {
-    ellipse(ballX, ballY, ballW, ballH, ballXV, ballYV);
+    fill(255);
+    ellipse(ballX, ballY, ballR * 2, ballR * 2, ballXV, ballYV);
   }
 
   collidePaddle() {
-    if (ballY + 25 >= rectY + rectH && rectY + rectH <= ballY + 25 && ballX + 25 >= rectX && ballX <= rectX + rectW + 25) {
-      ballY = (rectY + rectH - 25);
-      ballYV = ballYV * -1;
+    let A = random([1, 2]);
+    if (ballY + ballR >= rectY && ballY + ballR + rectH <= rectY && ballX + ballR >= rectX && ballX - ballR <= rectX + rectW) {
+      ballY = ballY - 5;
+      ballYV = -ballYV;
+      if (ballX > rectW / 2 && ballX < rectW) {
+        ballXV = -ballXV;
+      }
+      else {
+        ballXV = ballXV;
+      }
     }
   }
 
   collideBottom() {
-    if (ballY >= 375) {
+    if (ballY >= 775) {
       fill("red");
       gameState = 2;
     }
@@ -181,6 +199,7 @@ class Rect {
   }
 
   draw() {
+    fill(255)
     rect(rectX, rectY, rectW, rectH, rectVX);
 
 
