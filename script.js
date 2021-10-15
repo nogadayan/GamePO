@@ -12,8 +12,12 @@ function preload() {
 function setup() {
   createCanvas(1000, 800);
   x2 = 2844;
-  ball = new Ball(225, 225, 15, 2, 2);
-  paddle = new Rect(150, 350, 200, 15, 0);
+
+  if (gameState == 1)
+   let A = random([0, 1, 2, 3]);
+
+  ball = new Ball(500, 625, 15, 3, 3);
+  paddle = new Rect(400, 750, 200, 20, 0);
   const bricksPerRow = 10;
   const brickWidth = width / bricksPerRow;
   for (let i = 0; i < bricksPerRow; i++) {
@@ -45,42 +49,43 @@ function menu() {
   background("#ababab");
   fill(0);
   text("MENU", 25, 45);
-  text("1. menu", 25, 65);
+
   text("2. start game", 25, 85);
-  text("3. game over", 25, 105);
-  reset();
+
+  sound1.stop();
 }
 
 function reset() {
-  ballX = 225;
-  ballY = 225;
-  rectX = 150;
-  rectY = 350;
+  ballX = 500;
+  ballY = 625;
+  rectX = 400;
+  rectY = 750;
 }
 
 
 function game() {
   background(125);
 
-
   fill(0);
   text("Use the arrow keys, left and right (or AD) to move the square around", 25, 25);
 
   fill(0, 0, 0);
   scroller();
+
   paddle.draw();
   ball.collidePaddle();
   ball.collideBottom();
+  ball.collideWall();
   ball.collideBrick();
   ball.draw();
-  setTimeout(ball.move, seconds * 3);
-
+  ball.move();
+  //setTimeout(ball.move, seconds * 5);
 }
 
 function gameOver() {
   background('green');
   image(img1, 0, 0, 1000, 800);
-  
+
   textStyle(BOLD);
   textSize(36);
   text("GAME OVER", 405, 700);
@@ -93,11 +98,22 @@ function gameOver() {
 function music() {
   if (!sound1.isPlaying()) {
     sound1.play();
-    sound1.setVolume(1);
+    sound1.setVolume(0.8);
     sound1.rate(1);
   }
-  
 }
+
+function countdown() {
+  let timer = 3
+  text(timer, width / 2, height / 2);
+  if (frameCount % 60 == 0 && timer > 0) {
+    timer--;
+  }
+  if (timer == 0) {
+    text("START", width / 2, height * 0.7);
+  }
+}
+
 function keyPressed() {
 
   if (keyIsDown(ESCAPE)) {
@@ -106,10 +122,6 @@ function keyPressed() {
 
   if (keyIsDown(50)) {
     gameState = 1;
-  }
-
-  if (keyIsDown(51)) {
-    gameState = 2;
   }
 }
 
@@ -128,7 +140,6 @@ function scroller() {
   }
 }
 
-
 class Ball {
   constructor(x, y, r, xv, yv) {
     ballX = x;
@@ -139,22 +150,22 @@ class Ball {
   }
 
   move() {
-    ballX = ballX + ballXV;
-    ballY = ballY + ballYV;
-
-    if (gameState == 1 && ballX <= 23 || ballX >= 975) {
-      ballXV = ballXV * -1;
+    if (A == 0) {
+      ballX = ballX + ballXV;
+      ballY = ballY + ballYV;
     }
-    else {
-      ballXV = ballXV;
+    if (A == 1) {
+      ballX = ballX + ballXV;
+      ballY = ballY + ballYV;
     }
-    if (gameState == 1 && ballY <= 23 || ballY >= 775) {
-      ballYV = ballYV * -1;
+    if (A == 2) {
+      ballX = ballX + ballXV;
+      ballY = ballY + ballYV;
     }
-    else {
-      ballYV = ballYV;
+    if (A == 3) {
+      ballX = ballX + ballXV;
+      ballY = ballY + ballYV;
     }
-
   }
 
   draw() {
@@ -163,9 +174,8 @@ class Ball {
   }
 
   collidePaddle() {
-    let A = random([1, 2]);
-    if (ballY + ballR >= rectY && ballY + ballR + rectH <= rectY && ballX + ballR >= rectX && ballX - ballR <= rectX + rectW) {
-      ballY = ballY - 5;
+    if (ballY + ballR >= rectY && ballX > rectX && ballX < rectX + rectW) {
+      ballY = ballY - 1;
       ballYV = -ballYV;
       if (ballX > rectW / 2 && ballX < rectW) {
         ballXV = -ballXV;
@@ -173,6 +183,21 @@ class Ball {
       else {
         ballXV = ballXV;
       }
+    }
+  }
+
+  collideWall() {
+    if (gameState == 1 && ballX <= 13 || ballX >= 987) {
+      ballXV = ballXV * -1;
+    }
+    else {
+      ballXV = ballXV;
+    }
+    if (gameState == 1 && ballY <= 13 || ballY >= 787) {
+      ballYV = ballYV * -1;
+    }
+    else {
+      ballYV = ballYV;
     }
   }
 
@@ -198,23 +223,23 @@ class Rect {
   }
 
   draw() {
-    fill(255)
+    fill(255);
     rect(rectX, rectY, rectW, rectH, rectVX);
 
 
     if (rectX <= 0) {
       rectX = 1;
     }
-    if (rectX >= 300) {
-      rectX = 299;
+    if (rectX >= 800) {
+      rectX = 799;
     }
 
     if (keyIsDown(LEFT_ARROW) || (keyIsDown(65))) {
-      rectX -= 3;
+      rectX -= 4;
     }
 
     if (keyIsDown(RIGHT_ARROW) || (keyIsDown(68))) {
-      rectX += 3;
+      rectX += 4;
     }
 
   }
