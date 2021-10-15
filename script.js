@@ -1,10 +1,11 @@
-var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballR, ballXV, ballYV, gameState = 0, img1, img2, x1 = 0, x2, scrollSpeed = 0.3, seconds = 1000, sound1;
+var ball, paddle, brick, rectX, rectY, rectW, rectH, rectVX, ballX, ballY, ballR, ballXV, ballYV, gameState = 0, img1, img2, img3, x1 = 0, x2, scrollSpeed = 0.3, seconds = 1000, sound1;
 
 let bricks = []
 
 function preload() {
   img1 = loadImage('img/gameOver.jpg');
   img2 = loadImage('img/backgroundGame.png');
+  img3 = loadImage('img/backgroundMenu.png');
   soundFormats('mp3', 'ogg')
   sound1 = loadSound('mp3/gameOver.mp3');
 }
@@ -13,21 +14,25 @@ function setup() {
   createCanvas(1000, 800);
   x2 = 2844;
 
-  if (gameState == 1)
-   let A = random([0, 1, 2, 3]);
+
 
   ball = new Ball(500, 625, 15, 3, 3);
   paddle = new Rect(400, 750, 200, 20, 0);
   const bricksPerRow = 10;
   const brickWidth = width / bricksPerRow;
   for (let i = 0; i < bricksPerRow; i++) {
-    brick = new Brick(createVector(0, 0), brickWidth, 25, color("blue"))
+
+    brick = new Brick(i * brickWidth, 10, brickWidth, 25);
+    bricks.push(brick);
   }
+
+  console.log(bricks);
 }
 
 function draw() {
 
   text("gameState" + gameState, 25, 25);
+
 
   if (gameState == 0) {
     menu();
@@ -41,17 +46,20 @@ function draw() {
     gameOver();
     music();
   }
+
 }
 
 var x = 0;
 
 function menu() {
   background("#ababab");
-  fill(0);
-  text("MENU", 25, 45);
+  image(img3, 0, 0, 1000, 800);
+  fill('WHITE');
+  textSize(30);
+  text("MENU", 485, 245);
 
-  text("2. start game", 25, 85);
-
+  text("Press 2 to start game", 485, 385);
+  reset();
   sound1.stop();
 }
 
@@ -78,7 +86,11 @@ function game() {
   ball.collideWall();
   ball.collideBrick();
   ball.draw();
-  ball.move();
+
+  bricks.forEach((b) => {
+    b.draw();
+  })
+  //ball.move();
   //setTimeout(ball.move, seconds * 5);
 }
 
@@ -92,7 +104,7 @@ function gameOver() {
   textSize(24);
   text("Press Esc to go back to the main menu", 295, 765);
   fill('white');
-  setTimeout(reset, seconds * 3);
+  reset();
 }
 
 function music() {
@@ -150,22 +162,9 @@ class Ball {
   }
 
   move() {
-    if (A == 0) {
-      ballX = ballX + ballXV;
-      ballY = ballY + ballYV;
-    }
-    if (A == 1) {
-      ballX = ballX + ballXV;
-      ballY = ballY + ballYV;
-    }
-    if (A == 2) {
-      ballX = ballX + ballXV;
-      ballY = ballY + ballYV;
-    }
-    if (A == 3) {
-      ballX = ballX + ballXV;
-      ballY = ballY + ballYV;
-    }
+
+    ballX = ballX + ballXV;
+    ballY = ballY + ballYV;
   }
 
   draw() {
@@ -246,18 +245,21 @@ class Rect {
 }
 
 class Brick {
-  constructor(x, y, w, h, c) {
+  constructor(x, y, w, h) {
     this.x = x;
     this.y = y;
-    this.width = w;
-    this.height = h;
-    this.color = c;
-    this.points = 1;
-  }
-  display() {
-    fill(this.color);
-    rect(this.x, this.y, this.width, this.height);
+    this.w = w;
+    this.h = h;
   }
 
+  draw() {
+    fill("red");
+    rect(this.x, this.y, this.w, this.h)
+  }
 
+  checkCollision(){
+    //verwijderen
+    var idx = bricks.indexOf(this);
+    bricks.splice(idx,1);
+  }
 }
