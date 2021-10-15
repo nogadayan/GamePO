@@ -90,8 +90,8 @@ function game() {
   bricks.forEach((b) => {
     b.draw();
   })
-  //ball.move();
-  //setTimeout(ball.move, seconds * 5);
+  ball.move();
+  setTimeout(ball.move, seconds * 5);
 }
 
 function gameOver() {
